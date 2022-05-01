@@ -1,15 +1,17 @@
 package com.example.jetpack1;
 import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
 
 public class User {
 
-    private String number_id;
-    public ObservableField<String> firstName;
-    public ObservableField<String> lastName;
+    public ObservableField<String> phone;
+    public ObservableField<String> password;
+    public ObservableInt age = new ObservableInt(2);
 
-    public User(ObservableField<String> firstName ,ObservableField<String> lastName){
-        this.firstName = firstName;
-        this.lastName = lastName;
+
+    public User(ObservableField<String> phone ,ObservableField<String> password){
+        this.phone = phone;
+        this.password = password;
     }
 
 }

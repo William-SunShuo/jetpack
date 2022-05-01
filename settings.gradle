@@ -1,3 +1,4 @@
 rootProject.name = "Jetpack1"
 include ':app'
 include ':network'
+include ':databinding'
