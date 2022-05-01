@@ -15,8 +15,4 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
     }
 
-    fun onLike(view: View) {
-        data.like.value = (data.like.value ?: 0) + 1
-    }
-
 }

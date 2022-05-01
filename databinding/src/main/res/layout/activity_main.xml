@@ -43,7 +43,7 @@
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:text="like"
-            android:onClick="onLike"
+            android:onClick="@{()->data.onLike()}"
             android:layout_marginTop="160dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
