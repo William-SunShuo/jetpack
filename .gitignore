@@ -1079,3 +1079,5 @@
 /app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/nest_2.xml
 /app/src/main/res/layout/nest_2.xml
 /app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/nested_scroll.xml
+/.idea/modules/nest_scroll/Jetpack1.nested_scroll.iml
+/.idea/modules/scroll/Jetpack1.scroll.iml
