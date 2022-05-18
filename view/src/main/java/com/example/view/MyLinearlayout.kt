@@ -1,5 +1,4 @@
 package com.example.view
-
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -17,14 +16,13 @@ import androidx.core.view.forEachIndexed
 import kotlin.math.abs
 import kotlin.math.max
 
-class MyLinearlayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
-    LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
+class MyLinearlayout: LinearLayout {
 
     var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     var mSecondaryPointerId = MotionEvent.INVALID_POINTER_ID
     var mIsBeingDragged = false
 
-    private val scroller: OverScroller = OverScroller(getContext())
+    private val scroller: OverScroller = OverScroller(context)
     private val mVelocityTracker: VelocityTracker = VelocityTracker.obtain()
     private var mTouchSlop: Int = 0
     private var mMinimumVelocity: Int = 0
@@ -38,20 +36,20 @@ class MyLinearlayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int, 
 
     var lastY: Int = 0
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : this(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr,
         0
     )
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs, 0)
 
-    constructor(context: Context) : this(context, null)
+    constructor(context: Context) : super(context, null)
 
     init {
         setWillNotDraw(false)
-        val configuration = ViewConfiguration.get(getContext())
+        val configuration = ViewConfiguration.get(context)
         mTouchSlop = configuration.scaledTouchSlop
         mMinimumVelocity = configuration.scaledMinimumFlingVelocity
         mMaximumVelocity = configuration.scaledMaximumFlingVelocity
@@ -155,7 +153,7 @@ class MyLinearlayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int, 
             mVelocityTracker.addMovement(event)
             when (it.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    Log.i(Constant.TOUCH, "ACTION_DOWN")
+                    Log.i(Constant.TOUCH, "ACTION_DOWN,ActionIndex:${it.actionIndex}")
                     lastY = event.y.toInt()
                     mActivePointerId = it.getPointerId(it.actionIndex)
                     if (!scroller.isFinished) {
@@ -163,7 +161,7 @@ class MyLinearlayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int, 
                     }
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
-                    Log.i(Constant.TOUCH, "ACTION_POINTER_DOWN")
+                    Log.i(Constant.TOUCH, "ACTION_POINTER_DOWN,ActionIndex:${it.actionIndex}")
                     mSecondaryPointerId = it.getPointerId(it.actionIndex)
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -181,17 +179,7 @@ class MyLinearlayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int, 
                     }
                     if (mIsBeingDragged) {
         //                      scrollBy(0, deltaY)
-                        overScrollBy(
-                            0,
-                            deltaY,
-                            0,
-                            scrollY,
-                            0,
-                            computeVerticalScrollRange() - computeVerticalScrollExtent(),
-                            0,
-                            mOverscrollDistance,
-                            true
-                        )
+                        overScrollBy(0, deltaY, 0, scrollY, 0, computeVerticalScrollRange() - computeVerticalScrollExtent(), 0, mOverscrollDistance, true)
                         lastY = y
 
                         //EdgeEffect
@@ -222,18 +210,35 @@ class MyLinearlayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int, 
                     }
                 }
                 MotionEvent.ACTION_UP -> {
-                    Log.i(Constant.TOUCH, "ACTION_UP")
+                    Log.i(Constant.TOUCH, "ACTION_UP,ActionIndex:${it.actionIndex}")
                     mVelocityTracker.computeCurrentVelocity(1000)
                     val yVelocity = mVelocityTracker.yVelocity
                     smoothScrollBy(yVelocity.toInt())
                     mVelocityTracker.clear()
                 }
                 MotionEvent.ACTION_POINTER_UP -> {
-                    Log.i(Constant.TOUCH, "ACTION_POINTER_UP")
+                    Log.i(Constant.TOUCH, "ACTION_POINTER_UP,ActionIndex:${it.actionIndex}")
+                    onSecondaryPointerUp(it)
                 }
             }
         }
         return true
+    }
+
+    private fun onSecondaryPointerUp(ev: MotionEvent) {
+        val pointerIndex = ev.actionIndex
+        val pointerId = ev.getPointerId(pointerIndex)
+        if (pointerId == mActivePointerId) {
+            // This was our active pointer going up. Choose a new
+            // active pointer and adjust accordingly.
+            // TODO: Make this decision more intelligent.
+            val newPointerIndex = if (pointerIndex == 0) 1 else 0
+            lastY = ev.getY(newPointerIndex).toInt()
+            mActivePointerId = ev.getPointerId(newPointerIndex)
+//            if (mVelocityTracker != null) {
+//                mVelocityTracker.clear()
+//            }
+        }
     }
 
     private fun smoothScrollBy(speed: Int) {
