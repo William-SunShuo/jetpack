@@ -10,11 +10,17 @@
         android:name="com.example.navigation.Fragment1"
         tools:layout="@layout/fragment_1">
 
+       <!-- app:popExitAnim="@anim/slide_out_right"
+        app:enterAnim="@anim/slide_in_right"
+-->
         <action
             android:id="@+id/action1"
             app:destination="@id/fragment2"
-            app:popExitAnim="@anim/slide_out_top"
-            app:enterAnim="@anim/slide_in_bottom"/>
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
     </fragment>
 
     <fragment
