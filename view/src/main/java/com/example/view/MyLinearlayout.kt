@@ -55,7 +55,6 @@ class MyLinearlayout: LinearLayout {
         mMaximumVelocity = configuration.scaledMaximumFlingVelocity
         mOverscrollDistance = configuration.scaledOverscrollDistance
         mOverflingDistance = configuration.scaledOverflingDistance
-        mOverscrollDistance = 25
         overScrollMode = OVER_SCROLL_ALWAYS
         mEdgeEffectTop.color = Color.RED
     }
@@ -69,6 +68,21 @@ class MyLinearlayout: LinearLayout {
         }
     }
 
+    override fun measureChildWithMargins(
+        child: View?,
+        parentWidthMeasureSpec: Int,
+        widthUsed: Int,
+        parentHeightMeasureSpec: Int,
+        heightUsed: Int
+    ) {
+        super.measureChildWithMargins(
+            child,
+            parentWidthMeasureSpec,
+            widthUsed,
+            parentHeightMeasureSpec,
+            heightUsed
+        )
+    }
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
         Log.i(Constant.TAG, "onLayout")
@@ -140,12 +154,8 @@ class MyLinearlayout: LinearLayout {
         return range
     }
 
-    public override fun computeVerticalScrollExtent(): Int {
-        return super.computeVerticalScrollExtent()
-    }
-
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return true
+        return false
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -187,8 +197,8 @@ class MyLinearlayout: LinearLayout {
                         if (pulledToY < 0) {
                             Log.e("TEST", "pulledTOY top" + height + "deltaY" + deltaY)
                             mEdgeEffectTop.onPull(
-                                (deltaY / height).toFloat(),
-                                event.getX(mActivePointerId) / width
+                                deltaY.toFloat() / height,
+                                event.getX(0) / width
                             )
                             if (!mEdgeEffectBottom.isFinished) {
                                 mEdgeEffectBottom.onRelease()
@@ -202,11 +212,10 @@ class MyLinearlayout: LinearLayout {
                             if (!mEdgeEffectTop.isFinished) {
                                 mEdgeEffectTop.onRelease()
                             }
-                        } else {
                         }
-                        if (!mEdgeEffectTop.isFinished || !mEdgeEffectBottom.isFinished) {
+//                        if (!mEdgeEffectTop.isFinished || !mEdgeEffectBottom.isFinished) {
                             postInvalidate()
-                        }
+//                        }
                     }
                 }
                 MotionEvent.ACTION_UP -> {
@@ -291,16 +300,16 @@ class MyLinearlayout: LinearLayout {
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         val scrollY = scrollY
-        if (!mEdgeEffectTop.isFinished) {
+//        if (!mEdgeEffectTop.isFinished) {
             val count = canvas.save()
             val width = width - paddingLeft - paddingRight
-            canvas.translate(paddingLeft.toFloat(), Math.min(0, scrollY).toFloat())
+            canvas.translate(paddingLeft.toFloat(), 0.coerceAtMost(scrollY).toFloat())
             mEdgeEffectTop.setSize(width, height)
             if (mEdgeEffectTop.draw(canvas)) {
                 postInvalidate()
             }
             canvas.restoreToCount(count)
-        }
+//        }
         if (!mEdgeEffectBottom.isFinished) {
             val count = canvas.save()
             val width = width - paddingLeft - paddingRight
